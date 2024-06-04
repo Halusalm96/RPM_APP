@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">OO랜드 Play Mate</string>
-    <string name="title_activity_login">OO랜드 Play Mate</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_signup">OO랜드 Play Mate</string>
-</resources>
