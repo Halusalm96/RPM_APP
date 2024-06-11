@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".RegisterActivity">
+
+    <TextView
+        android:id="@+id/LoginTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:text="회원가입"
+        android:textColor="#00B0F0"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:gravity="center_horizontal" />
+
+    <EditText
+        android:id="@+id/editTextID"
+        android:background="@drawable/box_id"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:hint="User ID 입력"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:background="@drawable/box_id"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:hint="비밀번호 입력"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:id="@+id/btn_Register"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/box_login"
+        android:text="확인"
+        android:textStyle="bold"
+        android:textSize="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/editTextPassword"
+        android:layout_marginTop="20dp"/>
+</LinearLayout>
