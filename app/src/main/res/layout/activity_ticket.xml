@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_member"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="right"
+        android:background="@drawable/login" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:gravity="center"
+        android:src="@drawable/fun" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow android:gravity="center">
+            <Button
+                android:id="@+id/btn_ticket"
+                android:layout_width="250dp"
+                android:layout_height="190dp"
+                android:background="@drawable/box_btn"
+                android:layout_margin="8dp"
+                android:text="이용권 등록"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:enabled="true"/>
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그아웃"
+        android:visibility="gone" /> <!-- Initially hidden -->
+
+</LinearLayout>

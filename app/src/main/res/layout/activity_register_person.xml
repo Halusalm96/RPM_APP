@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="이름"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_age"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_name"
+        android:layout_marginTop="16dp"
+        android:hint="나이"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/et_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_age"
+        android:layout_marginTop="16dp"
+        android:hint="키 (cm)"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/btn_input_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_height"
+        android:layout_marginTop="16dp"
+        android:text="입력 안하기" />
+
+    <Button
+        android:id="@+id/btn_input_complete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_height"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@id/btn_input_cancel"
+        android:text="입력 완료" />
+
+</RelativeLayout>
