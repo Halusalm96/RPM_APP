@@ -1,10 +1,18 @@
 package com.example.rpm_project;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.*;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
@@ -35,4 +43,10 @@ public interface ApiService {
 
     @POST("/validate_code")
     Call<ResponseBody> validateCode(@Query("code") String code);
+
+    @POST("/api/childInfo")
+    Call<Void> addChildInfo(@Query("userNo") int userNo, @Body ChildInfo childInfo);
+
+    @GET("/api/childInfo")
+    Call<List<ChildInfo>> getAllChildInfo();
 }
