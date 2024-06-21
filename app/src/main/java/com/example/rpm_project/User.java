@@ -1,28 +1,29 @@
 package com.example.rpm_project;
 
 import com.google.gson.annotations.SerializedName;
-import java.time.LocalDate; // LocalDate import 추가
 
-public class User {
-    @SerializedName("user_no")
+import java.io.Serializable;
+
+public class User implements Serializable {
+    @SerializedName("userNo")
     private Integer userNo;
 
-    @SerializedName("user_id")
+    @SerializedName("userId")
     private String userId;
 
-    @SerializedName("user_pw")
+    @SerializedName("userPw")
     private String userPw;
 
-    @SerializedName("user_name")
+    @SerializedName("userName")
     private String userName;
 
-    @SerializedName("user_birth")
-    private LocalDate userBirth; // 타입을 LocalDate로 변경
+    @SerializedName("userBirth")
+    private String userBirth; // 타입을 LocalDate로 변경
 
-    @SerializedName("user_email")
+    @SerializedName("userEmail")
     private String userEmail;
 
-    @SerializedName("user_number")
+    @SerializedName("userNumber")
     private String userNumber;
 
     // 기본 생성자
@@ -30,7 +31,7 @@ public class User {
     }
 
     // 생성자
-    public User(Integer userNo, String userId, String userPw, String userName, LocalDate userBirth, String userEmail, String userNumber) {
+    public User(Integer userNo, String userId, String userPw, String userName, String userBirth, String userEmail, String userNumber) {
         this.userNo = userNo;
         this.userId = userId;
         this.userPw = userPw;
@@ -73,11 +74,11 @@ public class User {
         this.userName = userName;
     }
 
-    public LocalDate getUserBirth() {
+    public String getUserBirth() {
         return userBirth;
     }
 
-    public void setUserBirth(LocalDate userBirth) {
+    public void setUserBirth(String userBirth) {
         this.userBirth = userBirth;
     }
 

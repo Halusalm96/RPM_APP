@@ -6,6 +6,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -40,6 +41,10 @@ public interface ApiService {
     @PUT("/update/{userNo}")
     Call<User> updateUser(@Path("userNo") int userNo, @Body User updatedUser);
     // 다른 API 메서드들도 필요하다면 여기에 추가할 수 있습니다.
+
+    @DELETE("/delete/{userNo}")
+    Call<Void> deleteUser(@Path("userNo") int userNo);
+    // Define the deleteUser endpoint to delete a user by userNo
 
     @POST("/validate_code")
     Call<ResponseBody> validateCode(@Query("code") String code);

@@ -2,7 +2,6 @@ package com.example.rpm_project;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -80,12 +79,16 @@ public class MainActivity extends AppCompatActivity {
                                 if (responseBody.startsWith("Login successful!")) {
                                     // Extract user_no from the response
                                     int userNo = Integer.parseInt(responseBody.split("UserNo: ")[1]);
-                                    SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putInt("user_no", userNo);
-                                    editor.apply();
 
-                                    Log.d(TAG, "사용자 번호가 SharedPreferences에 저장되었습니다. 사용자 번호: " + userNo);
+                                    // 사용자 번호를 세션에 저장
+                                    SessionManager.getInstance(MainActivity.this).setUserNo(userNo);
+
+                                    Log.d(TAG, "사용자 번호가 세션에 저장되었습니다. 사용자 번호: " + userNo);
+                                    int storedUserNo = SessionManager.getInstance(MainActivity.this).getUserNo();
+                                    Log.d(TAG, "세션에 저장된 사용자 번호: " + storedUserNo);
+
+                                    // 로그인 성공 메시지 표시
+                                    Toast.makeText(MainActivity.this, "OO랜드에 오신걸 환영합니다", Toast.LENGTH_SHORT).show();
 
                                     // 로그인 성공 시 TicketActivity로 이동
                                     Intent intent = new Intent(MainActivity.this, TicketActivity.class);

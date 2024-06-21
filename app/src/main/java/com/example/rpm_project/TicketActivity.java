@@ -1,17 +1,24 @@
 package com.example.rpm_project;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TicketActivity extends AppCompatActivity {
     private Button btnMember, btnTicket, btnLogout;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +28,8 @@ public class TicketActivity extends AppCompatActivity {
         btnMember = findViewById(R.id.btn_member);
         btnTicket = findViewById(R.id.btn_ticket);
         btnLogout = findViewById(R.id.btn_logout);
+
+        apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
 
         // 회원 버튼 클릭 이벤트 처리
         btnMember.setOnClickListener(new View.OnClickListener() {
@@ -44,11 +53,7 @@ public class TicketActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // SharedPreferences에서 사용자 정보 삭제
-                SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear(); // 모든 데이터 삭제
-                editor.apply();
-
+                SessionManager.getInstance(TicketActivity.this).clear();
                 // MainActivity로 이동
                 Intent intent = new Intent(TicketActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -68,11 +73,8 @@ public class TicketActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.menu_edit:
                         // 정보 수정 액티비티로 이동
-                        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                        int userNo = sharedPreferences.getInt("user_no", -1); // Default value -1 if not found
-
-                        Intent editIntent = new Intent(TicketActivity.this, MemberActivity.class);
-                        startActivity(editIntent);
+                        int userNo = SessionManager.getInstance(TicketActivity.this).getUserNo();
+                        fetchUserData(userNo);
                         return true;
                     case R.id.menu_logout:
                         // 로그아웃 처리
@@ -84,6 +86,31 @@ public class TicketActivity extends AppCompatActivity {
             }
         });
         popup.show();
+    }
+
+    private void fetchUserData(int userNo) {
+        Call<User> call = apiService.getUser(userNo);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
+                    // User 데이터를 로그로 출력
+                    Log.d("TicketActivity", "사용자 정보: " + user.toString());
+                    // User 데이터를 로그로 출력하거나 다른 액티비티로 전달
+                    Intent intent = new Intent(TicketActivity.this, MemberActivity.class);
+                    intent.putExtra("user_data", user); // User 객체 전달
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(TicketActivity.this, "사용자 정보를 가져오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(TicketActivity.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private static final int REQUEST_QR_SCAN = 1;

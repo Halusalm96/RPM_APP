@@ -57,7 +57,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/myID"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -88,7 +88,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/myName"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -117,7 +117,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/myBirth"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -146,7 +146,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/myEmail"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -175,7 +175,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/myPhone"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -186,18 +186,41 @@
                 android:textSize="18dp" />
         </LinearLayout>
 
-        <!-- 수정 버튼 -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/editButton"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/box_login"
-            android:text="수정"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <!-- 수정 버튼과 탈퇴 버튼 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/editButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/box_login"
+                android:text="수정"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/deleteButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/box_login"
+                android:text="탈퇴"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>

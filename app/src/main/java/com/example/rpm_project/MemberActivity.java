@@ -2,7 +2,8 @@ package com.example.rpm_project;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +17,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,7 +29,7 @@ public class MemberActivity extends AppCompatActivity {
 
     private ApiService apiService;
     private TextView txtUserID, txtUserName, txtUserBirth, txtUserEmail, txtUserPhone;
-    private Button btnEdit;
+    private Button btnEdit, btnDelete;
     private String userPassword;
 
     private static final String TAG = "MemberActivity";
@@ -48,50 +47,34 @@ public class MemberActivity extends AppCompatActivity {
         txtUserEmail = findViewById(R.id.myEmail);
         txtUserPhone = findViewById(R.id.myPhone);
         btnEdit = findViewById(R.id.editButton);
+        btnDelete = findViewById(R.id.deleteButton); // 탈퇴 버튼 추가
 
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        int userNo = sharedPreferences.getInt("user_no", -1); // int 타입으로 가져오기
-        userPassword = sharedPreferences.getString("user_pw", "");
+        User user = (User) getIntent().getSerializableExtra("user_data");
+        handleUserData(user);
 
-        if (userNo != -1) {
-            getUserInfo(userNo);
-        } else {
-            Toast.makeText(this, "사용자 번호가 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
-        }
+        btnEdit.setOnClickListener(v -> showPasswordDialog(user));
+        btnDelete.setOnClickListener(v -> showDeleteConfirmationDialog(user));
 
-        btnEdit.setOnClickListener(v -> showPasswordDialog());
-    }
-
-    private void getUserInfo(int userNo) {
-        Call<User> call = apiService.getUser(userNo);
-        Log.d(TAG, "네트워크 요청: " + call.request().toString());
-        call.enqueue(new Callback<User>() {
+        TextView txtBack = findViewById(R.id.back);
+        txtBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                Log.d(TAG, "네트워크 응답: " + response.toString());
-                Log.d(TAG, "서버 응답 코드: " + response.code());
-                if (response.isSuccessful() && response.body() != null) {
-                    User user = response.body();
-                    Log.d(TAG, "응답 본문 (성공): " + user.toString());
-                    handleUserData(user);
-                } else {
-                    handleUserInfoFailure(response);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(MemberActivity.this, "사용자 정보를 가져오는 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "사용자 정보 가져오기 실패", t);
+            public void onClick(View v) {
+                navigateToTicketActivity();
             }
         });
+    }
+
+    private void navigateToTicketActivity() {
+        Intent intent = new Intent(MemberActivity.this, TicketActivity.class);
+        startActivity(intent);
+        finish(); // 현재 화면을 닫음
     }
 
     private void handleUserData(User user) {
         if (user != null) {
             String id = user.getUserId() != null ? user.getUserId() : "사용자 ID 없음";
             String name = user.getUserName() != null ? user.getUserName() : "사용자 이름 없음";
-            String birth = user.getUserBirth() != null ? formatDate(user.getUserBirth()) : "생일 정보 없음";
+            String birth = user.getUserBirth() != null ? user.getUserBirth() : "생일 없음";
             String email = user.getUserEmail() != null ? user.getUserEmail() : "이메일 정보 없음";
             String phone = user.getUserNumber() != null ? user.getUserNumber() : "전화번호 정보 없음";
 
@@ -112,29 +95,7 @@ public class MemberActivity extends AppCompatActivity {
         }
     }
 
-    // LocalDate를 yyyy-MM-dd 형식의 문자열로 변환하는 메서드
-    private String formatDate(LocalDate date) {
-        if (date != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            return date.format(formatter);
-        } else {
-            return "날짜 없음";
-        }
-    }
-
-
-    private void handleUserInfoFailure(Response<User> response) {
-        try {
-            String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
-            Log.e(TAG, "응답 본문 (오류): " + errorBody);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG, "사용자 정보를 가져오지 못했습니다. 오류 응답 코드: " + response.code());
-        Toast.makeText(MemberActivity.this, "사용자 정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
-    }
-
-    private void showPasswordDialog() {
+    private void showPasswordDialog(User user) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_password, null);
@@ -147,11 +108,19 @@ public class MemberActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String enteredPassword = editPassword.getText().toString();
-                        if (enteredPassword.equals(userPassword)) {
-                            Toast.makeText(MemberActivity.this, "비밀번호가 확인되었습니다. 정보를 수정하세요.", Toast.LENGTH_SHORT).show();
-                            updateUserInfo(); // 정보 수정 메서드 호출
+
+                        // User 객체에서 저장된 비밀번호를 가져옵니다.
+                        if (user != null) {
+                            String savedPassword = user.getUserPw();
+
+                            if (enteredPassword.equals(savedPassword)) {
+                                Toast.makeText(MemberActivity.this, "비밀번호가 확인되었습니다. 정보를 수정하세요.", Toast.LENGTH_SHORT).show();
+                                updateUserInfo(); // 정보 수정 메서드 호출
+                            } else {
+                                Toast.makeText(MemberActivity.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(MemberActivity.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MemberActivity.this, "사용자 정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -161,13 +130,16 @@ public class MemberActivity extends AppCompatActivity {
     }
 
     private void updateUserInfo() {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        int userNo = sharedPreferences.getInt("user_no", -1); // int 타입으로 가져오기
+        // SessionManager를 통해 사용자 정보 가져오기
+        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        int userNo = sessionManager.getUserNo(); // 사용자 번호 가져오기
 
         if (userNo != -1) {
             User updatedUser = new User();
             updatedUser.setUserName(txtUserName.getText().toString());
-            updatedUser.setUserBirth(LocalDate.parse(txtUserBirth.getText().toString())); // String을 LocalDate로 변환
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                updatedUser.setUserBirth(String.valueOf(LocalDate.parse(txtUserBirth.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+            }
             updatedUser.setUserEmail(txtUserEmail.getText().toString());
             updatedUser.setUserNumber(txtUserPhone.getText().toString());
 
@@ -175,21 +147,100 @@ public class MemberActivity extends AppCompatActivity {
             call.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(MemberActivity.this, "사용자 정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful() && response.body() != null) {
+                        Toast.makeText(MemberActivity.this, "정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                        navigateToTicketActivity(); // 정보 수정 후 TicketActivity로 이동
                     } else {
-                        Toast.makeText(MemberActivity.this, "사용자 정보 수정에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            Toast.makeText(MemberActivity.this, "정보 수정 실패: " + errorResponse, Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(MemberActivity.this, "정보 수정 실패", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    Toast.makeText(MemberActivity.this, "사용자 정보 수정 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "사용자 정보 수정 실패", t);
+                    Toast.makeText(MemberActivity.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
             Toast.makeText(this, "사용자 번호가 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showDeleteConfirmationDialog(User user) {
+        // 계정 삭제 확인 다이얼로그
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_password, null);
+        EditText editPassword = dialogView.findViewById(R.id.editTextPassword);
+
+        builder.setView(dialogView)
+                .setTitle("계정 삭제 확인")
+                .setMessage("정말로 계정을 삭제하시겠습니까?\n삭제한 데이터는 복구할 수 없습니다.")
+                .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 비밀번호 확인 다이얼로그에서 비밀번호 입력 후 처리
+                        String enteredPassword = editPassword.getText().toString();
+
+                        // User 객체에서 저장된 비밀번호를 가져옵니다.
+                        if (user != null) {
+                            String savedPassword = user.getUserPw();
+
+                            if (enteredPassword.equals(savedPassword)) {
+                                Toast.makeText(MemberActivity.this, "비밀번호가 확인되었습니다. 계정을 삭제합니다.", Toast.LENGTH_SHORT).show();
+                                deleteUserInfo(); // 계정 삭제 메서드 호출
+                            } else {
+                                Toast.makeText(MemberActivity.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(MemberActivity.this, "사용자 정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton("취소", null)
+                .create()
+                .show();
+    }
+
+
+    private void deleteUserInfo() {
+        // SessionManager를 통해 사용자 정보 가져오기
+        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        int userNo = sessionManager.getUserNo(); // 사용자 번호 가져오기
+
+        if (userNo != -1) {
+            Call<Void> call = apiService.deleteUser(userNo);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(MemberActivity.this, "계정이 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                        navigateToMainActivity();
+                    } else {
+                        Toast.makeText(MemberActivity.this, "계정 삭제 실패", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(MemberActivity.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "사용자 번호가 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void navigateToMainActivity() {
+        SessionManager.getInstance(MemberActivity.this).clear();
+        // 메인 화면으로 이동하는 코드 작성
+        Intent intent = new Intent(MemberActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish(); // 현재 화면을 닫음
     }
 }
