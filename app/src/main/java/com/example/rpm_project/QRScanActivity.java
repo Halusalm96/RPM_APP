@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -18,38 +19,46 @@ import com.google.zxing.ResultPoint;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView.TorchListener;
 
+import java.io.IOException;
 import java.util.List;
 
-public class QRScanActivity extends AppCompatActivity implements TorchListener {
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class QRScanActivity extends AppCompatActivity {
 
     private static final String TAG = QRScanActivity.class.getSimpleName();
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1;
-    private static final int REQUEST_CODE_CODE_INPUT = 2; // Request code for code input activity
+    private static final int REQUEST_CODE_CODE_INPUT = 2;
     private DecoratedBarcodeView barcodeView;
     private Button btnCodeInput;
+    private ApiService apiService;
+    private static final String BASE_URL = "http://192.168.123.17:8080/";
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_scan);
+
+        // Initialize apiService using RetrofitClient
+        apiService = RetrofitClient.getClient(BASE_URL).create(ApiService.class);
 
         barcodeView = findViewById(R.id.scanner_view);
         btnCodeInput = findViewById(R.id.btn_code_input);
 
-        // 카메라 권한 확인 및 요청
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         } else {
             startCamera();
         }
 
-        // 코드 입력 버튼 클릭 이벤트 처리
         btnCodeInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 코드 입력 화면으로 이동
                 Intent intent = new Intent(QRScanActivity.this, CodeInputActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_CODE_INPUT);
             }
@@ -61,7 +70,7 @@ public class QRScanActivity extends AppCompatActivity implements TorchListener {
             barcodeView.decodeContinuous(callback);
         } catch (Exception e) {
             Log.e(TAG, "Error starting camera", e);
-            Toast.makeText(this, "카메라를 시작하는 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error starting camera", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -71,13 +80,14 @@ public class QRScanActivity extends AppCompatActivity implements TorchListener {
         public void barcodeResult(BarcodeResult result) {
             try {
                 String qrCode = result.getText();
-                Intent intent = new Intent();
-                intent.putExtra("qr_code", qrCode);
-                setResult(RESULT_OK, intent);
-                finish();
+                if (qrCode != null) {
+                    handleQRCode(qrCode);
+                }else {
+                    Toast.makeText(QRScanActivity.this, "Failed to read QR code", Toast.LENGTH_SHORT).show();
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Error processing barcode result", e);
-                Toast.makeText(QRScanActivity.this, "QR 코드 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(QRScanActivity.this, "Error processing barcode result", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -87,6 +97,76 @@ public class QRScanActivity extends AppCompatActivity implements TorchListener {
             // Optional callback method
         }
     };
+
+    private void handleQRCode(String qrCode) {
+        Log.d(TAG, "QR Code Scanned: " + qrCode);
+
+        String extractedData = extractDataFromQRCode(qrCode);
+
+        if (extractedData == null || extractedData.isEmpty()) {
+            Toast.makeText(QRScanActivity.this, "Failed to read QR code", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+//        if (!(qrCode.toLowerCase().startsWith("http://") || qrCode.toLowerCase().startsWith("https://"))) {
+//            Toast.makeText(QRScanActivity.this, "Invalid QR Code format", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
+        // Log the extracted data to terminal (Logcat)
+        Log.d(TAG, "Extracted Code Data: " + extractedData);
+
+//        ApiService apiService = RetrofitClient.getClient(BASE_URL).create(ApiService.class);
+        Call<ResponseBody> call = apiService.validateCode(extractedData);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String message = response.body().string();
+                        // 응답에 따른 처리
+                        if (message.equals("Welcome to the land!")) {
+                            Toast.makeText(QRScanActivity.this, "코드 검증 성공", Toast.LENGTH_SHORT).show();
+                            // 인원정보 등록 페이지로 이동 또는 필요한 작업 수행
+                            Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(QRScanActivity.this, "유효하지 않은 코드입니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(QRScanActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(QRScanActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 실패 처리
+                Log.e(TAG, "Error: " + t.getMessage());
+                Toast.makeText(QRScanActivity.this, "서버 연결 중 오류 발생", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Method to extract data from QR code (custom logic based on QR format)
+    private String extractDataFromQRCode(String qrCode) {
+        // Example: Assuming qrCode is in format http://192.168.123.17:8080/validate_code?code=z1x2c3
+        // Extract the 'code' parameter value from the URL
+        try {
+            String[] parts = qrCode.split("code=");
+            if (parts.length > 1) {
+                return parts[1];
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error extracting data from QR code", e);
+        }
+        return null;
+    }
 
     @Override
     protected void onPause() {
@@ -115,36 +195,30 @@ public class QRScanActivity extends AppCompatActivity implements TorchListener {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
             } else {
-                Toast.makeText(this, "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission is required", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_CODE_INPUT) {
-            if (resultCode == RESULT_OK) {
-                // 코드 입력 성공 처리
+            if (resultCode == RESULT_OK && data != null) {
                 String enteredCode = data.getStringExtra("entered_code");
-                Toast.makeText(this, "입력한 코드: " + enteredCode, Toast.LENGTH_SHORT).show();
-                // 여기서 입력된 코드를 사용하여 원하는 작업을 수행할 수 있습니다.
+                Toast.makeText(this, "Entered code: " + enteredCode, Toast.LENGTH_SHORT).show();
+                // Additional processing using enteredCode if needed
             } else if (resultCode == RESULT_CANCELED) {
-                // 코드 입력 취소 처리
-                Toast.makeText(this, "코드 입력이 취소되었습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Code input canceled", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @Override
-    public void onTorchOn() {
-        // Torch ON 상태
-    }
-
-    @Override
-    public void onTorchOff() {
-        // Torch OFF 상태
+    protected void onDestroy() {
+        super.onDestroy();
+        barcodeView.pauseAndWait();
     }
 }
