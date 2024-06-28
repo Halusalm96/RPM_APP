@@ -40,7 +40,7 @@ public class RideSelectionWebActivity extends AppCompatActivity {
         /** Show a toast from the web page */
         @JavascriptInterface
         public void goToAndroidActivity() {
-            Intent intent = new Intent(mActivity, RideSelectionActivity.class); // 일단 기존에 있던 기구선택창으로 넘어가게 해놨습니다.
+            Intent intent = new Intent(mActivity, CameraActivity.class); // 기구 객체 안내로 전환
             startActivity(intent);
             finish();
         }
