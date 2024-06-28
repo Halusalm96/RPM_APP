@@ -53,7 +53,11 @@ public class RegisterPersonActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 놀이기구 선택 화면으로 이동
-                startActivity(new Intent(RegisterPersonActivity.this, RideSelectionActivity.class));
+//                startActivity(new Intent(RegisterPersonActivity.this, RideSelectionActivity.class));
+
+                // 웹뷰 액티비티로 이동
+                startActivity(new Intent(RegisterPersonActivity.this, RideSelectionWebActivity.class));
+
                 finish(); // 현재 액티비티 종료
             }
         });
@@ -138,8 +142,12 @@ public class RegisterPersonActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         Toast.makeText(RegisterPersonActivity.this, "자녀 정보 저장 성공", Toast.LENGTH_SHORT).show();
                         // 놀이기구 선택 화면으로 이동
-                        startActivity(new Intent(RegisterPersonActivity.this, RideSelectionActivity.class));
+//                        startActivity(new Intent(RegisterPersonActivity.this, RideSelectionActivity.class));
+
+                        // 웹뷰 액티비티로 이동
+                        startActivity(new Intent(RegisterPersonActivity.this, RideSelectionWebActivity.class));
                         finish(); // 현재 액티비티 종료
+
                     } else {
                         Toast.makeText(RegisterPersonActivity.this, "자녀 정보 저장 실패", Toast.LENGTH_SHORT).show();
                     }

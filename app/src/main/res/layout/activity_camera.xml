@@ -7,7 +7,9 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" /><!-- 다른 뷰 요소들 -->
+        android:layout_height="match_parent" />
+
+    <!-- 다른 뷰 요소들 -->
 
     <Button
         android:id="@+id/btn_back"
