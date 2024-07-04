@@ -1,0 +1,1 @@
+C:\CookAndroid\Project\RPM_project\sdk\build\intermediates\cxx\Debug\1p28k8gv\obj\armeabi-v7a

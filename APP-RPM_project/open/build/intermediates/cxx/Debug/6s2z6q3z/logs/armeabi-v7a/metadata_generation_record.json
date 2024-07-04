@@ -1,0 +1,184 @@
+[
+  {
+    "level_": 0,
+    "message_": "Start JSON generation. Platform version: 26 min SDK version: armeabi-v7a",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1972245067
+  },
+  {
+    "level_": 0,
+    "message_": "rebuilding JSON C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\\android_gradle_build.json due to:",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -736229815
+  },
+  {
+    "level_": 0,
+    "message_": "- expected json C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\\android_gradle_build.json file is not present, will remove stale json folder",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -152504733
+  },
+  {
+    "level_": 0,
+    "message_": "- missing previous command file C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\\metadata_generation_command.txt, will remove stale json folder",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1770251649
+  },
+  {
+    "level_": 0,
+    "message_": "- command changed from previous, will remove stale json folder",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1623601742
+  },
+  {
+    "level_": 0,
+    "message_": "removing stale contents from \u0027C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\u0027",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 725206251
+  },
+  {
+    "level_": 0,
+    "message_": "created folder \u0027C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\u0027",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 920530935
+  },
+  {
+    "level_": 0,
+    "message_": "executing cmake @echo off\n\"C:\\\\CookAndroid\\\\SDK\\\\cmake\\\\3.18.1\\\\bin\\\\cmake.exe\" ^\n  \"-HC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\libcxx_helper\" ^\n  \"-DCMAKE_SYSTEM_NAME\u003dAndroid\" ^\n  \"-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\" ^\n  \"-DCMAKE_SYSTEM_VERSION\u003d26\" ^\n  \"-DANDROID_PLATFORM\u003dandroid-26\" ^\n  \"-DANDROID_ABI\u003darmeabi-v7a\" ^\n  \"-DCMAKE_ANDROID_ARCH_ABI\u003darmeabi-v7a\" ^\n  \"-DANDROID_NDK\u003dC:\\\\CookAndroid\\\\SDK\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_ANDROID_NDK\u003dC:\\\\CookAndroid\\\\SDK\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_TOOLCHAIN_FILE\u003dC:\\\\CookAndroid\\\\SDK\\\\ndk\\\\23.1.7779620\\\\build\\\\cmake\\\\android.toolchain.cmake\" ^\n  \"-DCMAKE_MAKE_PROGRAM\u003dC:\\\\CookAndroid\\\\SDK\\\\cmake\\\\3.18.1\\\\bin\\\\ninja.exe\" ^\n  \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\6s2z6q3z\\\\obj\\\\armeabi-v7a\" ^\n  \"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003dC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\6s2z6q3z\\\\obj\\\\armeabi-v7a\" ^\n  \"-DCMAKE_BUILD_TYPE\u003dDebug\" ^\n  \"-BC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\.cxx\\\\Debug\\\\6s2z6q3z\\\\armeabi-v7a\" ^\n  -GNinja ^\n  \"-DANDROID_STL\u003dc++_shared\"\n",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -4527735
+  },
+  {
+    "level_": 0,
+    "message_": "@echo off\n\"C:\\\\CookAndroid\\\\SDK\\\\cmake\\\\3.18.1\\\\bin\\\\cmake.exe\" ^\n  \"-HC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\libcxx_helper\" ^\n  \"-DCMAKE_SYSTEM_NAME\u003dAndroid\" ^\n  \"-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\" ^\n  \"-DCMAKE_SYSTEM_VERSION\u003d26\" ^\n  \"-DANDROID_PLATFORM\u003dandroid-26\" ^\n  \"-DANDROID_ABI\u003darmeabi-v7a\" ^\n  \"-DCMAKE_ANDROID_ARCH_ABI\u003darmeabi-v7a\" ^\n  \"-DANDROID_NDK\u003dC:\\\\CookAndroid\\\\SDK\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_ANDROID_NDK\u003dC:\\\\CookAndroid\\\\SDK\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_TOOLCHAIN_FILE\u003dC:\\\\CookAndroid\\\\SDK\\\\ndk\\\\23.1.7779620\\\\build\\\\cmake\\\\android.toolchain.cmake\" ^\n  \"-DCMAKE_MAKE_PROGRAM\u003dC:\\\\CookAndroid\\\\SDK\\\\cmake\\\\3.18.1\\\\bin\\\\ninja.exe\" ^\n  \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\6s2z6q3z\\\\obj\\\\armeabi-v7a\" ^\n  \"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003dC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\6s2z6q3z\\\\obj\\\\armeabi-v7a\" ^\n  \"-DCMAKE_BUILD_TYPE\u003dDebug\" ^\n  \"-BC:\\\\CookAndroid\\\\Project\\\\RPM_project\\\\open\\\\.cxx\\\\Debug\\\\6s2z6q3z\\\\armeabi-v7a\" ^\n  -GNinja ^\n  \"-DANDROID_STL\u003dc++_shared\"\n",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -567106872
+  },
+  {
+    "level_": 0,
+    "message_": "Exiting generation of C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\\compile_commands.json.bin normally",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -2099048435
+  },
+  {
+    "level_": 0,
+    "message_": "done executing cmake",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 1311255491
+  },
+  {
+    "level_": 0,
+    "message_": "write command file C:\\CookAndroid\\Project\\RPM_project\\open\\.cxx\\Debug\\6s2z6q3z\\armeabi-v7a\\metadata_generation_command.txt",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -223933635
+  },
+  {
+    "level_": 0,
+    "message_": "JSON generation completed without problems",
+    "file_": "C:\\CookAndroid\\Project\\RPM_project\\open\\libcxx_helper\\CMakeLists.txt",
+    "tag_": "debug|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {},
+      "fieldsDescending": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": -1045638721
+  }
+]

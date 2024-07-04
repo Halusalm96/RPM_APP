@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 롤러코스터 -->
+    <LinearLayout
+        android:id="@+id/layout_roller_coaster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_roller_coaster"
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_roller_coaster"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/text_roller_coaster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="롤러코스터"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- 바이킹 -->
+    <LinearLayout
+        android:id="@+id/layout_viking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_viking"
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_viking"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/text_viking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="바이킹"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- 관람차 -->
+    <LinearLayout
+        android:id="@+id/layout_ferris_wheel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/layout_roller_coaster"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_ferris_wheel"
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_ferris_wheel"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/text_ferris_wheel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="관람차"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- 회전목마 -->
+    <LinearLayout
+        android:id="@+id/layout_merry_go_round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/layout_viking"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_merry_go_round"
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_merry_go_round"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/text_merry_go_round"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회전목마"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- 기구 검색 버튼 -->
+    <Button
+        android:id="@+id/btn_search_rides"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="기구 검색"
+        app:layout_constraintTop_toBottomOf="@id/layout_merry_go_round"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

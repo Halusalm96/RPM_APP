@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.rpm_project">
+
+    <!-- 필요한 권한들 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- 카메라 관련 feature -->
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="true"/>
+
+    <application
+        android:allowBackup="true"
+        android:usesCleartextTraffic="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.RPM_project"
+        tools:targetApi="31">
+
+        <!-- MainActivity가 앱의 시작 액티비티입니다 -->
+        <activity android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".SignupActivity"
+            android:exported="true" />
+
+        <activity android:name=".TicketActivity"
+            android:exported="true" />
+
+        <activity android:name=".MemberActivity"
+            android:clickable="true"
+            android:exported="true" />
+
+        <activity android:name=".QRScanActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".CodeInputActivity"
+            android:exported="true" />
+
+        <activity android:name=".RegisterPersonActivity"
+            android:exported="true" />
+
+        <activity android:name=".CameraActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:exported="true">
+            <!-- CameraActivity는 앱의 시작 액티비티가 아닙니다 -->
+        </activity>
+
+        <activity android:name=".RideSelectionActivity"
+            android:label="Ride Selection Activity(android)"
+            android:exported="true" />
+
+        <activity android:name=".RideSelectionWebActivity"
+            android:label="Ride Selection Activity"
+            android:exported="true" />
+    </application>
+</manifest>
