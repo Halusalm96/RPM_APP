@@ -13,7 +13,11 @@
         android:id="@+id/object_detection_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <!-- 다른 뷰 요소들 -->
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/btn_back"

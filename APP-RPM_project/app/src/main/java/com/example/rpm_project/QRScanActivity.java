@@ -1,5 +1,7 @@
 package com.example.rpm_project;
 
+import static com.example.rpm_project.RetrofitClient.*;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;

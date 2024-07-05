@@ -2,14 +2,14 @@ package com.example.rpm_project;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.YuvImage;
-import android.media.Image;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -54,6 +54,8 @@ public class CameraActivity extends AppCompatActivity {
     private ExecutorService cameraExecutor;
     private Interpreter tflite;
     private ObjectDetectionOverlay objectDetectionOverlay;
+    private WebView webView;
+    private Button btnBack;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +64,17 @@ public class CameraActivity extends AppCompatActivity {
 
         previewView = findViewById(R.id.camera_preview);
         objectDetectionOverlay = findViewById(R.id.object_detection_overlay);
+        webView = findViewById(R.id.webview); // WebView 초기화
+        btnBack = findViewById(R.id.btn_back); // 뒤로 가기 버튼 초기화
+
+        webView.setWebViewClient(new WebViewClient()); // WebViewClient 설정
+
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(CameraActivity.this, RideSelectionWebActivity.class);
+            startActivity(intent);
+            // 이전 액티비티로 돌아가기
+            finish();
+        });
 
         // TFLite 모델 로드
         try {
@@ -187,11 +200,13 @@ public class CameraActivity extends AppCompatActivity {
 
     private void processDetectionResult(float[][][][] output, Bitmap originalBitmap) {
         List<ObjectDetectionOverlay.DetectionResult> results = new ArrayList<>();
+        ObjectDetectionOverlay.DetectionResult bestResult = null;
+        float highestConfidence = 0;
 
         for (float[][] detectionGrid : output[0]) {
             for (float[] detection : detectionGrid) {
                 // 신뢰도 점수 임계값 확인
-                if (detection[4] > 8) { // 정확도 임계값을 0.6으로 설정
+                if (detection[4] > 6.5) { // 정확도 임계값을 6.5로 설정
                     float x = detection[0];
                     float y = detection[1];
                     float width = detection[2];
@@ -208,18 +223,39 @@ public class CameraActivity extends AppCompatActivity {
                         Log.d("Detection", "Class: " + className + ", Mapped Value: " + mappedValue);
 
                         // 바운딩 박스 좌표 계산
-                        float left = (x - width / 2) * originalBitmap.getWidth() / modelInputWidth * 100;
-                        float top = (y - height / 2) * originalBitmap.getHeight() / modelInputHeight * 200;
-                        float right = (x + width / 2) * originalBitmap.getWidth() / modelInputWidth * 100;
-                        float bottom = (y + height / 2) * originalBitmap.getHeight() / modelInputHeight * 200;
+                        float left = (x - width / 2) * originalBitmap.getWidth() / modelInputWidth;
+                        float top = (y - height / 2) * originalBitmap.getHeight() / modelInputHeight;
+                        float right = (x + width / 2) * originalBitmap.getWidth() / modelInputWidth;
+                        float bottom = (y + height / 2) * originalBitmap.getHeight() / modelInputHeight;
 
-                        results.add(new ObjectDetectionOverlay.DetectionResult(className, confidence, left, top, right, bottom));
+                        ObjectDetectionOverlay.DetectionResult result = new ObjectDetectionOverlay.DetectionResult(className, confidence, left, top, right, bottom);
+                        results.add(result);
+
+                        // 신뢰도가 가장 높은 탐지 결과를 선택
+                        if (confidence > highestConfidence) {
+                            highestConfidence = confidence;
+                            bestResult = result;
+                        }
                     } else {
                         // 잘못된 클래스 ID 로그 생략
                     }
                 }
             }
         }
+
+        if (bestResult != null) {
+            // 가장 신뢰도가 높은 탐지 결과의 클래스 이름을 사용하여 URL 생성
+            int detectedNumber = mapClassNameToValue(bestResult.getClassName());
+            String url = "http://rpm-web.p-e.kr/mobile/ride_info.php?targetNo=" + detectedNumber;
+            runOnUiThread(() -> {
+                // WebView에 URL을 로드하고 카메라 화면을 숨김
+                webView.setVisibility(WebView.VISIBLE);
+                previewView.setVisibility(PreviewView.GONE);
+                objectDetectionOverlay.setVisibility(ObjectDetectionOverlay.GONE);
+                webView.loadUrl(url);
+            });
+        }
+
         runOnUiThread(() -> objectDetectionOverlay.setDetectionResults(results));
     }
 

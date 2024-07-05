@@ -91,7 +91,6 @@ public class ObjectDetectionOverlay extends View {
         private final float bottom;
         public RectF rect;
 
-
         public DetectionResult(String className, float confidence, float left, float top, float right, float bottom) {
             this.className = className;
             this.confidence = confidence;
@@ -99,14 +98,19 @@ public class ObjectDetectionOverlay extends View {
             this.top = top;
             this.right = right;
             this.bottom = bottom;
+            this.rect = new RectF(left, top, right, bottom);
         }
 
         public void draw(Canvas canvas, Paint boxPaint, Paint textPaint) {
-            RectF rect = new RectF(left, top, right, bottom);
             canvas.drawRect(rect, boxPaint);
-
             String label = String.format("%s (%.2f)", className, confidence);
             canvas.drawText(label, left, top - 10, textPaint);
         }
+
+        // getClassName 메소드 추가
+        public String getClassName() {
+            return className;
+        }
     }
 }
+
