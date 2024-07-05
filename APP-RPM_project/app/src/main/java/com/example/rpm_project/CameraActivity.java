@@ -1,14 +1,15 @@
 package com.example.rpm_project;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -25,7 +26,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import org.tensorflow.lite.Interpreter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,7 +35,6 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -56,6 +55,7 @@ public class CameraActivity extends AppCompatActivity {
     private ObjectDetectionOverlay objectDetectionOverlay;
     private WebView webView;
     private Button btnBack;
+    private ProcessCameraProvider cameraProvider;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,21 +64,22 @@ public class CameraActivity extends AppCompatActivity {
 
         previewView = findViewById(R.id.camera_preview);
         objectDetectionOverlay = findViewById(R.id.object_detection_overlay);
-        webView = findViewById(R.id.webview); // WebView 초기화
-        btnBack = findViewById(R.id.btn_back); // 뒤로 가기 버튼 초기화
+        webView = findViewById(R.id.webview);
+        btnBack = findViewById(R.id.btn_back);
 
-        webView.setWebViewClient(new WebViewClient()); // WebViewClient 설정
+        webView.setWebViewClient(new WebViewClient());
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
 
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(CameraActivity.this, RideSelectionWebActivity.class);
             startActivity(intent);
-            // 이전 액티비티로 돌아가기
             finish();
         });
 
         // TFLite 모델 로드
         try {
-            tflite = new Interpreter(loadModelFile("model2.tflite"), new Interpreter.Options().setNumThreads(4)); // 4 스레드 사용
+            tflite = new Interpreter(loadModelFile("model2.tflite"), new Interpreter.Options().setNumThreads(4));
             int[] outputShape = tflite.getOutputTensor(0).shape();
             outputHeight = outputShape[1];
             outputWidth = outputShape[2];
@@ -117,7 +118,7 @@ public class CameraActivity extends AppCompatActivity {
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
         cameraProviderFuture.addListener(() -> {
             try {
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                cameraProvider = cameraProviderFuture.get();
                 bindPreview(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
@@ -248,10 +249,16 @@ public class CameraActivity extends AppCompatActivity {
             int detectedNumber = mapClassNameToValue(bestResult.getClassName());
             String url = "http://rpm-web.p-e.kr/mobile/ride_info.php?targetNo=" + detectedNumber;
             runOnUiThread(() -> {
-                // WebView에 URL을 로드하고 카메라 화면을 숨김
-                webView.setVisibility(WebView.VISIBLE);
-                previewView.setVisibility(PreviewView.GONE);
-                objectDetectionOverlay.setVisibility(ObjectDetectionOverlay.GONE);
+                // 카메라를 끄고 리소스 해제
+                if (cameraProvider != null) {
+                    cameraProvider.unbindAll();
+                }
+                if (cameraExecutor != null) {
+                    cameraExecutor.shutdown();
+                }
+                // WebView에 URL을 로드하고 레이아웃 전환
+                findViewById(R.id.camera_layout).setVisibility(View.GONE);
+                webView.setVisibility(View.VISIBLE);
                 webView.loadUrl(url);
             });
         }

@@ -1,10 +1,13 @@
 package com.example.rpm_project;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -160,11 +164,36 @@ public class MainActivity extends AppCompatActivity {
                 // 모든 권한을 허용한 경우 로그인 화면 표시
                 showLoginScreen();
             } else {
-                // 권한을 허용하지 않은 경우 앱 종료
-                Toast.makeText(this, "권한을 허용해야 앱을 사용할 수 있습니다.", Toast.LENGTH_SHORT).show();
-//                finish();
+                // 권한을 허용하지 않은 경우 권한이 필요하다는 메시지를 표시하고 다시 요청
+                showPermissionRationale();
             }
         }
+    }
+
+    // 권한 요청 이유를 설명하고 다시 요청하거나 설정으로 이동하는 방법 제공
+    private void showPermissionRationale() {
+        new AlertDialog.Builder(this)
+                .setTitle("권한 요청")
+                .setMessage("앱을 사용하려면 권한을 허용해야 합니다. 설정에서 권한을 허용해주세요.")
+                .setPositiveButton("설정으로 이동", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 설정 화면으로 이동
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("다시 시도", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 권한 다시 요청
+                        requestPermissions();
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 
     // 로그인 화면 표시 메서드

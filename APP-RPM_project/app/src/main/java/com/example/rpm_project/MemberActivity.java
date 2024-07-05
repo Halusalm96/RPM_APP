@@ -163,6 +163,7 @@ public class MemberActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
+                    t.printStackTrace();
                     Toast.makeText(MemberActivity.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });

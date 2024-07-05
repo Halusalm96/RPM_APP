@@ -21,13 +21,9 @@ public class RetrofitClient {
                     .serializeNulls()
                     .create();
 
-            // HttpLoggingInterceptor를 사용하여 네트워크 요청 및 응답을 로깅
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
             // OkHttpClient 구성
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .addInterceptor(loggingInterceptor)
+                    .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                     .build();
 
             // Retrofit 인스턴스 생성
