@@ -1,8 +1,15 @@
 package com.example.rpm_project;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ChildInfo {
+    @SerializedName("childName")
     private String childName;
+
+    @SerializedName("childAge")
     private int childAge;
+
+    @SerializedName("childHeight")
     private int childHeight;
 
     public ChildInfo(String childName, int childAge, int childHeight) {

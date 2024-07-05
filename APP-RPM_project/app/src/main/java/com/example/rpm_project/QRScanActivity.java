@@ -4,6 +4,7 @@ import static com.example.rpm_project.RetrofitClient.*;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +39,9 @@ public class QRScanActivity extends AppCompatActivity {
     private DecoratedBarcodeView barcodeView;
     private Button btnCodeInput;
     private ApiService apiService;
+    private SharedPreferences sharedPreferences;
+    private static final String SHARED_PREFS = "sharedPrefs";
+    private static final String VERIFIED_CODE = "verifiedCode";
     private static final String BASE_URL = "http://192.168.123.17:8080/";
 
 
@@ -46,11 +50,12 @@ public class QRScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_scan);
 
-        // Initialize apiService using RetrofitClient
         apiService = RetrofitClient.getClient(BASE_URL).create(ApiService.class);
 
         barcodeView = findViewById(R.id.scanner_view);
         btnCodeInput = findViewById(R.id.btn_code_input);
+
+        sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
@@ -65,6 +70,14 @@ public class QRScanActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_CODE_INPUT);
             }
         });
+
+        // 검증된 코드가 있는지 확인하고, 있으면 다음 화면으로 이동
+        String verifiedCode = sharedPreferences.getString(VERIFIED_CODE, null);
+        if (verifiedCode != null) {
+            Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void startCamera() {
@@ -84,7 +97,7 @@ public class QRScanActivity extends AppCompatActivity {
                 String qrCode = result.getText();
                 if (qrCode != null) {
                     handleQRCode(qrCode);
-                }else {
+                } else {
                     Toast.makeText(QRScanActivity.this, "Failed to read QR code", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
@@ -110,15 +123,8 @@ public class QRScanActivity extends AppCompatActivity {
             return;
         }
 
-//        if (!(qrCode.toLowerCase().startsWith("http://") || qrCode.toLowerCase().startsWith("https://"))) {
-//            Toast.makeText(QRScanActivity.this, "Invalid QR Code format", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-
-        // Log the extracted data to terminal (Logcat)
         Log.d(TAG, "Extracted Code Data: " + extractedData);
 
-//        ApiService apiService = RetrofitClient.getClient(BASE_URL).create(ApiService.class);
         Call<ResponseBody> call = apiService.validateCode(extractedData);
 
         call.enqueue(new Callback<ResponseBody>() {
@@ -127,10 +133,14 @@ public class QRScanActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         String message = response.body().string();
-                        // 응답에 따른 처리
                         if (message.equals("Welcome to the land!")) {
                             Toast.makeText(QRScanActivity.this, "코드 검증 성공", Toast.LENGTH_SHORT).show();
-                            // 인원정보 등록 페이지로 이동 또는 필요한 작업 수행
+
+                            // 검증된 코드를 SharedPreferences에 저장
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(VERIFIED_CODE, extractedData);
+                            editor.apply();
+
                             Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
                             startActivity(intent);
                             finish();
@@ -148,17 +158,13 @@ public class QRScanActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // 실패 처리
                 Log.e(TAG, "Error: " + t.getMessage());
                 Toast.makeText(QRScanActivity.this, "서버 연결 중 오류 발생", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // Method to extract data from QR code (custom logic based on QR format)
     private String extractDataFromQRCode(String qrCode) {
-        // Example: Assuming qrCode is in format http://192.168.123.17:8080/validate_code?code=z1x2c3
-        // Extract the 'code' parameter value from the URL
         try {
             String[] parts = qrCode.split("code=");
             if (parts.length > 1) {
@@ -211,7 +217,6 @@ public class QRScanActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null) {
                 String enteredCode = data.getStringExtra("entered_code");
                 Toast.makeText(this, "Entered code: " + enteredCode, Toast.LENGTH_SHORT).show();
-                // Additional processing using enteredCode if needed
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Code input canceled", Toast.LENGTH_SHORT).show();
             }

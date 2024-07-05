@@ -1,5 +1,7 @@
 package com.example.rpm_project;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -62,10 +64,6 @@ public class User implements Serializable {
         return userPw;
     }
 
-    public void setUserPw(String userPw) {
-        this.userPw = userPw;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -98,6 +96,7 @@ public class User implements Serializable {
         this.userNumber = userNumber;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +

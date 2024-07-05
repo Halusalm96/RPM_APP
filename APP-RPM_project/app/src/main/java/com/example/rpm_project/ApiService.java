@@ -39,12 +39,10 @@ public interface ApiService {
     Call<User> getUser(@Path("userNo") int userNo);
 
     @PUT("/update/{userNo}")
-    Call<User> updateUser(@Path("userNo") int userNo, @Body User updatedUser);
-    // 다른 API 메서드들도 필요하다면 여기에 추가할 수 있습니다.
+    Call<Void> updateUser(@Path("userNo") int userNo, @Body User updatedUser);
 
     @DELETE("/delete/{userNo}")
     Call<Void> deleteUser(@Path("userNo") int userNo);
-    // Define the deleteUser endpoint to delete a user by userNo
 
     @POST("/validate_code")
     Call<ResponseBody> validateCode(@Query("code") String code);

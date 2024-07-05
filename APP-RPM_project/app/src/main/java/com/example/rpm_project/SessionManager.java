@@ -14,7 +14,7 @@ public class SessionManager {
     // Singleton 인스턴스
     private static SessionManager instance;
 
-    SessionManager(Context context) {
+    private SessionManager(Context context) {  // 생성자를 private으로 변경
         this.context = context;
         pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
@@ -35,7 +35,7 @@ public class SessionManager {
 
     // 사용자 식별 번호 가져오기
     public int getUserNo() {
-        return pref.getInt(KEY_USER_NO, 0); // 기본값으로 0을 반환하거나 원하는 값 설정
+        return pref.getInt(KEY_USER_NO, -1); // 기본값으로 -1을 반환
     }
 
     // 사용자 세션 정보 지우기

@@ -131,7 +131,7 @@ public class MemberActivity extends AppCompatActivity {
 
     private void updateUserInfo() {
         // SessionManager를 통해 사용자 정보 가져오기
-        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        SessionManager sessionManager = SessionManager.getInstance(getApplicationContext());
         int userNo = sessionManager.getUserNo(); // 사용자 번호 가져오기
 
         if (userNo != -1) {
@@ -143,11 +143,11 @@ public class MemberActivity extends AppCompatActivity {
             updatedUser.setUserEmail(txtUserEmail.getText().toString());
             updatedUser.setUserNumber(txtUserPhone.getText().toString());
 
-            Call<User> call = apiService.updateUser(userNo, updatedUser);
-            call.enqueue(new Callback<User>() {
+            Call<Void> call = apiService.updateUser(userNo, updatedUser);
+            call.enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
                         Toast.makeText(MemberActivity.this, "정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show();
                         navigateToTicketActivity(); // 정보 수정 후 TicketActivity로 이동
                     } else {
@@ -162,7 +162,7 @@ public class MemberActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
+                public void onFailure(Call<Void> call, Throwable t) {
                     Toast.makeText(MemberActivity.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -210,7 +210,7 @@ public class MemberActivity extends AppCompatActivity {
 
     private void deleteUserInfo() {
         // SessionManager를 통해 사용자 정보 가져오기
-        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        SessionManager sessionManager = SessionManager.getInstance(getApplicationContext());
         int userNo = sessionManager.getUserNo(); // 사용자 번호 가져오기
 
         if (userNo != -1) {
