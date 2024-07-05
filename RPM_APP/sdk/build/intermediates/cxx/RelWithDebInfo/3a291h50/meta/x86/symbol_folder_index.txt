@@ -1,1 +1,0 @@
-C:\CookAndroid\Project\RPM_project\sdk\build\intermediates\cxx\RelWithDebInfo\3a291h50\obj\x86

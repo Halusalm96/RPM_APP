@@ -1,2 +1,0 @@
-ninja: Entering directory `C:\CookAndroid\Project\RPM_APP\sdk\.cxx\Debug\g3c2j6i2\armeabi-v7a'
-ninja: no work to do.
