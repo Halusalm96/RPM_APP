@@ -1,12 +1,14 @@
 package com.example.rpm_project;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -70,6 +72,7 @@ public class CameraActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient());
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(CameraActivity.this, RideSelectionWebActivity.class);
@@ -92,6 +95,23 @@ public class CameraActivity extends AppCompatActivity {
 
         // 카메라 미리보기 시작
         startCamera();
+    }
+
+    public class WebAppInterface {
+        private Activity mActivity;
+
+        /** Instantiate the interface and set the context */
+        WebAppInterface(Activity activity) {
+            mActivity = activity;
+        }
+
+        /** Show a toast from the web page */
+        @JavascriptInterface
+        public void goToAndroidActivity() {
+            Intent intent = new Intent(mActivity, CameraActivity.class);
+            mActivity.startActivity(intent);
+            mActivity.finish();
+        }
     }
 
     private MappedByteBuffer loadModelFile(String modelPath) throws IOException {

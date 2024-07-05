@@ -1,7 +1,5 @@
 package com.example.rpm_project;
 
-import static com.example.rpm_project.RetrofitClient.*;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,13 +42,12 @@ public class QRScanActivity extends AppCompatActivity {
     private static final String VERIFIED_CODE = "verifiedCode";
     private static final String BASE_URL = "http://192.168.123.17:8080/";
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_scan);
 
-        apiService = RetrofitClient.getClient(BASE_URL).create(ApiService.class);
+        apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
 
         barcodeView = findViewById(R.id.scanner_view);
         btnCodeInput = findViewById(R.id.btn_code_input);
@@ -71,13 +68,25 @@ public class QRScanActivity extends AppCompatActivity {
             }
         });
 
-        // 검증된 코드가 있는지 확인하고, 있으면 다음 화면으로 이동
+        checkVerifiedCode();
+    }
+
+    private void checkVerifiedCode() {
         String verifiedCode = sharedPreferences.getString(VERIFIED_CODE, null);
         if (verifiedCode != null) {
             Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (sharedPreferences.getString(VERIFIED_CODE, null) != null) {
+            sharedPreferences.edit().remove(VERIFIED_CODE).apply();
+            Toast.makeText(this, "검증된 코드가 초기화되었습니다.", Toast.LENGTH_SHORT).show();
+        }
+        super.onBackPressed();
     }
 
     private void startCamera() {
@@ -133,6 +142,7 @@ public class QRScanActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         String message = response.body().string();
+                        Log.d(TAG, "Server Response: " + message);
                         if (message.equals("Welcome to the land!")) {
                             Toast.makeText(QRScanActivity.this, "코드 검증 성공", Toast.LENGTH_SHORT).show();
 
@@ -148,17 +158,18 @@ public class QRScanActivity extends AppCompatActivity {
                             Toast.makeText(QRScanActivity.this, "유효하지 않은 코드입니다.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Error processing server response", e);
                         Toast.makeText(QRScanActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    Log.e(TAG, "Failed server response: " + response.code());
                     Toast.makeText(QRScanActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "Error: " + t.getMessage());
+                Log.e(TAG, "Server connection error: " + t.getMessage());
                 Toast.makeText(QRScanActivity.this, "서버 연결 중 오류 발생", Toast.LENGTH_SHORT).show();
             }
         });

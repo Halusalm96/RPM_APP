@@ -58,6 +58,7 @@ public class CodeInputActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         String message = response.body().string();
+                        Log.d(TAG, "Server Response: " + message);
                         if (message.equals("Welcome to the land!")) {
                             Toast.makeText(CodeInputActivity.this, "코드 검증 성공", Toast.LENGTH_SHORT).show();
 
@@ -73,17 +74,18 @@ public class CodeInputActivity extends AppCompatActivity {
                             Toast.makeText(CodeInputActivity.this, "유효하지 않은 코드입니다.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Error processing server response", e);
                         Toast.makeText(CodeInputActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    Log.e(TAG, "Failed server response: " + response.code());
                     Toast.makeText(CodeInputActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "Error: " + t.getMessage());
+                Log.e(TAG, "Server connection error: " + t.getMessage());
                 Toast.makeText(CodeInputActivity.this, "서버 연결 중 오류 발생", Toast.LENGTH_SHORT).show();
             }
         });

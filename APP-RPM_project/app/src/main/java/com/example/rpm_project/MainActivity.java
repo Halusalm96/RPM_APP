@@ -38,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private static final int REQUEST_CODE_PERMISSION = 100;
-    private static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final String[] REQUIRED_PERMISSIONS = {
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +59,15 @@ public class MainActivity extends AppCompatActivity {
         // 권한 체크 및 요청
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!checkPermissions()) {
+                Log.d(TAG, "Permissions not granted, requesting permissions.");
                 requestPermissions();
             } else {
+                Log.d(TAG, "Permissions already granted, showing login screen.");
                 // 권한이 이미 허용된 경우 로그인 화면 표시
                 showLoginScreen();
             }
         } else {
+            Log.d(TAG, "SDK version < M, showing login screen.");
             // 안드로이드 버전이 M 미만인 경우에는 바로 로그인 화면 표시
             showLoginScreen();
         }
@@ -136,15 +143,33 @@ public class MainActivity extends AppCompatActivity {
         for (String permission : REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(this, permission)
                     != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Permission " + permission + " not granted.");
                 return false;
             }
         }
+        Log.d(TAG, "All permissions granted.");
         return true;
     }
 
     // 권한 요청
     private void requestPermissions() {
-        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSION);
+        Log.d(TAG, "Requesting permissions: " + String.join(", ", REQUIRED_PERMISSIONS));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11 이상
+            try {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.addCategory("android.intent.category.DEFAULT");
+                intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
+                startActivityForResult(intent, REQUEST_CODE_PERMISSION);
+            } catch (Exception e) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivityForResult(intent, REQUEST_CODE_PERMISSION);
+            }
+        } else {
+            // Android 10 이하
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSION);
+        }
     }
 
     // 권한 요청 결과 처리
@@ -154,16 +179,19 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             boolean allGranted = true;
-            for (int grantResult : grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission " + permissions[i] + " not granted.");
                     allGranted = false;
                     break;
                 }
             }
             if (allGranted) {
+                Log.d(TAG, "All permissions granted, showing login screen.");
                 // 모든 권한을 허용한 경우 로그인 화면 표시
                 showLoginScreen();
             } else {
+                Log.d(TAG, "Not all permissions granted, showing permission rationale.");
                 // 권한을 허용하지 않은 경우 권한이 필요하다는 메시지를 표시하고 다시 요청
                 showPermissionRationale();
             }
@@ -178,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("설정으로 이동", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "Navigating to settings for permission.");
                         // 설정 화면으로 이동
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -188,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("다시 시도", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // 권한 다시 요청
+                        Log.d(TAG, "Retrying permission request.");
                         requestPermissions();
                     }
                 })
@@ -198,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 로그인 화면 표시 메서드
     private void showLoginScreen() {
+        Log.d(TAG, "Showing login screen.");
         editID.setVisibility(View.VISIBLE);
         editPassword.setVisibility(View.VISIBLE);
         btnLogin.setVisibility(View.VISIBLE);
