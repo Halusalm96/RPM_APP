@@ -1,0 +1,127 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+ext {
+    kotlin_version = '1.8.10'
+}
+
+android {
+    namespace 'com.example.rpm_project'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.rpm_project"
+        minSdk 26  // 24에서 26으로 수정
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+                cppFlags "-std=c++11", "-frtti", "-fexceptions", "-DANDROID", "-Werror"
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            }
+        }
+        ndk {
+            abiFilters 'x86_64', 'x86', 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding true
+        compose true
+    }
+    // OpenCV 라이브러리를 넣기 위해 다음과 같이 설정합니다.
+    // 'sdk' 모듈에서 제공하는 네이티브 라이브러리 경로를 참조해야 합니다.
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven {
+        url "https://opencv.jfrog.io/artifactory/opencv"
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+dependencies {
+    implementation 'com.jcraft:jsch:0.1.55' // ssh 파일 전송
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+
+    // CameraX
+    def camerax_version = "1.3.0-alpha05"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+    implementation "androidx.camera:camera-mlkit-vision:${camerax_version}"
+
+    // 기타 의존성
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'redis.clients:jedis:3.7.0'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+    implementation 'org.tensorflow:tensorflow-lite:2.8.0'
+
+    // OpenCV
+//    implementation 'org.opencv:opencv-android:4.10.0'
+
+    // ONNX Runtime
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.12.1'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+dependencies {
+    implementation project(path: ':sdk')
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version") {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
+}

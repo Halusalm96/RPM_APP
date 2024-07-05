@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.4.1)
+
+# Specifies a path to native header files.
+include_directories(src/main/cpp/include)
+
+# Add your C++ source files here
+add_library( # Sets the name of the library.
+             native-lib
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/native-lib.cpp )
+
+# Link the native library to OpenCV libraries
+find_library( # Sets the name of the path variable.
+              log-lib
+              log )
+
+# Specify the OpenCV native library
+set(OpenCV_DIR <path_to_opencv_android_sdk>/sdk/native/jni)
+set(ANDROID_STL "c++_shared")
+
+# Import OpenCV
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+# Link your native library to OpenCV
+target_link_libraries( # Specifies the target library.
+                       native-lib
+
+                       # Links the OpenCV library to the target library.
+                       ${OpenCV_LIBS}
+
+                       # Links the target library to the log library
+                       # included in the NDK.
+                       ${log-lib} )

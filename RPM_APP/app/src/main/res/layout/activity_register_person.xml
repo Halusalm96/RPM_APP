@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 맨 위에 제목 추가 -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="자녀 정보 입력"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 자녀 정보 입력 필드들을 포함하는 레이아웃 -->
+        <LinearLayout
+            android:id="@+id/child_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 자녀 정보 입력 추가 버튼 -->
+        <Button
+            android:id="@+id/btn_add_child_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="자녀 정보 입력 추가"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+
+        <!-- 버튼들 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/btn_input_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="건너뛰기 " />
+
+            <Button
+                android:id="@+id/btn_input_complete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:text="입력 완료" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
