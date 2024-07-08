@@ -1,8 +1,11 @@
 package com.example.rpm_project;
 
+import static com.example.rpm_project.QRScanActivity.SHARED_PREFS;
+
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -154,22 +157,7 @@ public class MainActivity extends AppCompatActivity {
     // 권한 요청
     private void requestPermissions() {
         Log.d(TAG, "Requesting permissions: " + String.join(", ", REQUIRED_PERMISSIONS));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android 11 이상
-            try {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                intent.addCategory("android.intent.category.DEFAULT");
-                intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
-                startActivityForResult(intent, REQUEST_CODE_PERMISSION);
-            } catch (Exception e) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                startActivityForResult(intent, REQUEST_CODE_PERMISSION);
-            }
-        } else {
-            // Android 10 이하
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSION);
-        }
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSION);
     }
 
     // 권한 요청 결과 처리
@@ -193,37 +181,48 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Log.d(TAG, "Not all permissions granted, showing permission rationale.");
                 // 권한을 허용하지 않은 경우 권한이 필요하다는 메시지를 표시하고 다시 요청
-                showPermissionRationale();
+//                showPermissionRationale();
             }
         }
     }
 
     // 권한 요청 이유를 설명하고 다시 요청하거나 설정으로 이동하는 방법 제공
-    private void showPermissionRationale() {
-        new AlertDialog.Builder(this)
-                .setTitle("권한 요청")
-                .setMessage("앱을 사용하려면 권한을 허용해야 합니다. 설정에서 권한을 허용해주세요.")
-                .setPositiveButton("설정으로 이동", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "Navigating to settings for permission.");
-                        // 설정 화면으로 이동
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("다시 시도", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "Retrying permission request.");
-                        requestPermissions();
-                    }
-                })
-                .setCancelable(false)
-                .show();
-    }
+//    private void showPermissionRationale() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("권한 요청")
+//                .setMessage("앱을 사용하려면 권한을 허용해야 합니다. 설정에서 권한을 허용해주세요.")
+//                .setPositiveButton("설정으로 이동", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        Log.d(TAG, "Navigating to settings for permission.");
+//                        // 설정 화면으로 이동
+//                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+//                        intent.setData(uri);
+//                        startActivity(intent);
+//                    }
+//                })
+//                .setNegativeButton("다시 시도", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        Log.d(TAG, "Retrying permission request.");
+//                        requestPermissions();
+//                    }
+//                })
+//                .setCancelable(false)
+//                .show();
+//    }
+
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//
+//        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putBoolean("isQrCodeRegistered", false);
+//        editor.apply();
+//    }
 
     // 로그인 화면 표시 메서드
     private void showLoginScreen() {

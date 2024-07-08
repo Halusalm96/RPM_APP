@@ -34,7 +34,6 @@ public class ObjectDetectionOverlay extends View {
         textPaint.setTextSize(32f);
     }
 
-
     public void setDetectionResults(List<DetectionResult> results) {
         this.detectionResults = results;
         invalidate();

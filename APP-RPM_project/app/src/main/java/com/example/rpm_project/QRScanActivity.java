@@ -38,7 +38,7 @@ public class QRScanActivity extends AppCompatActivity {
     private Button btnCodeInput;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
-    private static final String SHARED_PREFS = "sharedPrefs";
+    public static final String SHARED_PREFS = "sharedPrefs";
     private static final String VERIFIED_CODE = "verifiedCode";
     private static final String BASE_URL = "http://192.168.123.17:8080/";
 
@@ -67,25 +67,11 @@ public class QRScanActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_CODE_INPUT);
             }
         });
-
-        checkVerifiedCode();
-    }
-
-    private void checkVerifiedCode() {
-        String verifiedCode = sharedPreferences.getString(VERIFIED_CODE, null);
-        if (verifiedCode != null) {
-            Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
-            startActivity(intent);
-            finish();
-        }
     }
 
     @Override
     public void onBackPressed() {
-        if (sharedPreferences.getString(VERIFIED_CODE, null) != null) {
-            sharedPreferences.edit().remove(VERIFIED_CODE).apply();
-            Toast.makeText(this, "검증된 코드가 초기화되었습니다.", Toast.LENGTH_SHORT).show();
-        }
+        // 뒤로가기 버튼을 눌렀을 때의 동작을 정의하지 않음
         super.onBackPressed();
     }
 
@@ -149,6 +135,7 @@ public class QRScanActivity extends AppCompatActivity {
                             // 검증된 코드를 SharedPreferences에 저장
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString(VERIFIED_CODE, extractedData);
+                            editor.putBoolean("isQrCodeRegistered", true); // QR 코드 등록 상태 저장
                             editor.apply();
 
                             Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
@@ -227,11 +214,53 @@ public class QRScanActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_CODE_INPUT) {
             if (resultCode == RESULT_OK && data != null) {
                 String enteredCode = data.getStringExtra("entered_code");
-                Toast.makeText(this, "Entered code: " + enteredCode, Toast.LENGTH_SHORT).show();
+                validateCode(enteredCode);
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Code input canceled", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void validateCode(String code) {
+        Call<ResponseBody> call = apiService.validateCode(code);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String message = response.body().string();
+                        Log.d(TAG, "Server Response: " + message);
+                        if (message.equals("Welcome to the land!")) {
+                            Toast.makeText(QRScanActivity.this, "코드 검증 성공", Toast.LENGTH_SHORT).show();
+
+                            // 검증된 코드를 SharedPreferences에 저장
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(VERIFIED_CODE, code);
+                            editor.apply();
+
+                            Intent intent = new Intent(QRScanActivity.this, RegisterPersonActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(QRScanActivity.this, "유효하지 않은 코드입니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error processing server response", e);
+                        Toast.makeText(QRScanActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.e(TAG, "Failed server response: " + response.code());
+                    Toast.makeText(QRScanActivity.this, "서버 응답 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, "Server connection error: " + t.getMessage());
+                Toast.makeText(QRScanActivity.this, "서버 연결 중 오류 발생", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

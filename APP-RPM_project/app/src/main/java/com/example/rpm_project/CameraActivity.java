@@ -227,7 +227,7 @@ public class CameraActivity extends AppCompatActivity {
         for (float[][] detectionGrid : output[0]) {
             for (float[] detection : detectionGrid) {
                 // 신뢰도 점수 임계값 확인
-                if (detection[4] > 6.5) { // 정확도 임계값을 6.5로 설정
+                if (detection[4] > 8.5) { // 정확도 임계값을 6.5로 설정
                     float x = detection[0];
                     float y = detection[1];
                     float width = detection[2];

@@ -65,6 +65,7 @@ public class CodeInputActivity extends AppCompatActivity {
                             // 검증된 코드를 SharedPreferences에 저장
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString(VERIFIED_CODE, code);
+                            editor.putBoolean("isQrCodeRegistered", true); // QR 코드 등록 상태 저장
                             editor.apply();
 
                             Intent intent = new Intent(CodeInputActivity.this, RegisterPersonActivity.class);
@@ -90,4 +91,20 @@ public class CodeInputActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onBackPressed() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        boolean isQrCodeRegistered = sharedPreferences.getBoolean("isQrCodeRegistered", false);
+
+        if (isQrCodeRegistered) {
+            // QR 코드가 등록된 경우, 기본 동작 수행
+            super.onBackPressed();
+        } else {
+            // QR 코드가 등록되지 않은 경우, QR 코드 인식 화면으로 이동
+            Intent intent = new Intent(this, QRScanActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
 }
