@@ -11,7 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     private static Retrofit retrofit = null;
-    private static final String BASE_URL = "http://192.168.123.17:8080/";
+    // BASE_URL을 EC2 인스턴스의 IP 주소로 변경
+    private static final String BASE_URL = "http://13.124.83.151:8080/";
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {

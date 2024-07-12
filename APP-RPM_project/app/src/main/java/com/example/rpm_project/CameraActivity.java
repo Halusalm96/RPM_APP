@@ -92,7 +92,6 @@ public class CameraActivity extends AppCompatActivity {
             Log.e("TFLite", "TFLite 모델 로드 실패", e);
             Toast.makeText(this, "TFLite 모델 로드 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
         // 카메라 미리보기 시작
         startCamera();
     }
